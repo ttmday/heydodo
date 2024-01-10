@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:intl/intl.dart';
 import 'package:objectbox/objectbox.dart';
 
@@ -10,6 +12,7 @@ class GroupToDoEntity {
   String? title;
   bool? isFavorite;
   bool? isFixed;
+  Uint8List? image;
 
   @Backlink()
   final todos = ToMany<ToDoEntity>();
@@ -20,6 +23,7 @@ class GroupToDoEntity {
       DateTime? createAt,
       this.title,
       this.isFavorite,
+      this.image,
       this.isFixed})
       : createAt = createAt ?? DateTime.now();
 

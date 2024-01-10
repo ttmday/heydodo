@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:heydodo/src/presentation/screens/home/bloc/home_bloc.dart';
+import 'package:heydodo/src/presentation/widgets/floating_button.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 
 import 'package:heydodo/src/presentation/providers/group_todo_provider.dart';
@@ -24,50 +27,66 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late final PageController _pageController;
 
-  int _currentPage = 0;
+  late final HomeBloC _bloC;
 
   @override
   void initState() {
-    _pageController = PageController(initialPage: _currentPage);
+    _bloC = HomeBloC();
+    _pageController = PageController(initialPage: 0);
     context.read<NoteProvider>().getAllNotes();
     context.read<GroupToDoProvider>().getAllGroups();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      HeyDoDoTheme.setStatusBarAndNavigationBarTheme(
+          color: HeyDoDoColors.white, brightness: Brightness.dark);
+    });
+
     super.initState();
   }
 
   @override
   void dispose() {
+    _bloC.dispose();
     context.read<StoreProvider>().close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    HeyDoDoTheme.setStatusBarAndNavigationBarTheme(
-        color: HeyDoDoColors.white, brightness: Brightness.dark);
     return Scaffold(
       backgroundColor: HeyDoDoColors.white,
-      appBar: AppBar(
-        title: const SafeArea(child: HeyDoDoAppBar()),
-      ),
       body: SafeArea(
           child: PageView(
         controller: _pageController,
         children: const [MyNotesScreen(), MyToDosScreen()],
         onPageChanged: (int page) {
-          setState(() {
-            _currentPage = page;
-          });
+          _bloC.setCurrentPage(page);
         },
       )),
-      bottomNavigationBar: HeyDoDoNavigationBar(
-        currentPageIndex: _currentPage,
-        onChange: (index) {
-          setState(() {
-            _currentPage = index;
-          });
-          _pageController.jumpToPage(_currentPage);
+      floatingActionButton: HeyDoDoFloatingButton(
+        onPressed: () {
+          _bloC.floatingButtonActionExecute(context);
         },
+        child: const SizedBox(
+          child: Icon(
+            Iconsax.add,
+            size: heyDoDoPadding * 4,
+            color: HeyDoDoColors.light,
+          ),
+        ),
       ),
+      bottomNavigationBar: StreamBuilder<int>(
+          stream: _bloC.stream,
+          initialData: 0,
+          builder: (context, snapshot) {
+            return HeyDoDoNavigationBar(
+              currentPageIndex: snapshot.data!,
+              onChange: (int page) {
+                _bloC.setCurrentPage(page);
+                _pageController.jumpToPage(page);
+              },
+            );
+          }),
     );
   }
 }
@@ -92,20 +111,6 @@ class HeyDoDoAppBar extends StatelessWidget {
       const SizedBox(
         width: heyDoDoPadding,
       ),
-      // MaterialButton(
-      //   onPressed: () {},
-      //   child: Container(
-      //     padding: const EdgeInsets.all(heyDoDoPadding),
-      //     decoration: BoxDecoration(
-      //         shape: BoxShape.circle,
-      //         border: Border.all(width: 1.2, color: HeyDoDoColors.light)),
-      //     child: const Icon(
-      //       Icons.add,
-      //       size: heyDoDoPadding * 4,
-      //       color: HeyDoDoColors.light,
-      //     ),
-      //   ),
-      // )
     ]);
   }
 }

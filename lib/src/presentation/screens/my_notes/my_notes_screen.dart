@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:heydodo/src/config/constants/colors.dart';
 import 'package:heydodo/src/config/constants/utils.dart';
 import 'package:heydodo/src/domain/entities/note_entity.dart';
@@ -6,9 +8,7 @@ import 'package:heydodo/src/presentation/providers/note_provider.dart';
 import 'package:heydodo/src/presentation/screens/my_notes/widgets/my_note_list.dart';
 import 'package:heydodo/src/presentation/screens/screens.dart';
 import 'package:heydodo/src/presentation/widgets/empty_list_message.dart';
-import 'package:heydodo/src/presentation/widgets/floating_button.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:provider/provider.dart';
+import 'package:heydodo/src/presentation/lib/animations/slide_right_to_left_route_animation.dart';
 
 class MyNotesScreen extends StatefulWidget {
   const MyNotesScreen({super.key});
@@ -22,7 +22,7 @@ class _MyNotesScreenState extends State<MyNotesScreen>
   void _onCreateNewNote() {
     NoteEntity note = NoteEntity('');
     Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => NoteScreen(note: note)));
+        .push(slideRightToLeftRouteAnimation(NoteScreen(note: note)));
   }
 
   @override
@@ -58,18 +58,6 @@ class _MyNotesScreenState extends State<MyNotesScreen>
             ],
           );
         },
-      ),
-      floatingActionButton: HeyDoDoFloatingButton(
-        onPressed: () {
-          _onCreateNewNote();
-        },
-        child: const SizedBox(
-          child: Icon(
-            Iconsax.add,
-            size: heyDoDoPadding * 4,
-            color: HeyDoDoColors.light,
-          ),
-        ),
       ),
     );
   }

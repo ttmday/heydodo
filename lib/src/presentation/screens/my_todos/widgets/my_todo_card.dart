@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:heydodo/src/domain/entities/todo_entity.dart';
 import 'package:heydodo/src/presentation/providers/group_todo_provider.dart';
+import 'package:heydodo/src/presentation/widgets/dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:iconsax/iconsax.dart';
 
@@ -106,14 +107,39 @@ class MyGroupToDoCard extends StatelessWidget {
             ),
           ),
           Positioned(
-              top: heyDoDoPadding,
+              top: heyDoDoPadding + 1,
               right: heyDoDoPadding,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   GestureDetector(
                     onTap: () {
-                      context.read<GroupToDoProvider>().remove(groupToDo.id);
+                      showHeyDoDoAlert(
+                          context: context,
+                          title: 'Confirmar',
+                          content: HeyDoDoDialogAlertContentText(text: [
+                            const TextSpan(
+                                text:
+                                    'Al presionar continuar se eliminará permanentemente el grupo ToDo '),
+                            TextSpan(
+                                text: '${groupToDo.title}',
+                                style: const TextStyle(
+                                    color: HeyDoDoColors.medium, fontSize: 18))
+                          ]),
+                          buttons: [
+                            const HeyDoDoAlertButtonConfirm(label: 'Continuar'),
+                            const SizedBox(
+                              width: heyDoDoPadding * 2,
+                            ),
+                            const HeyDoDoAlertButtonCancel(label: 'Cancelar')
+                          ]).then((value) {
+                        if (value != null &&
+                            value == HeyDoDoDialogAlertRole.confirmed) {
+                          context
+                              .read<GroupToDoProvider>()
+                              .remove(groupToDo.id);
+                        }
+                      });
                     },
                     child: const SizedBox(
                       child: Icon(
@@ -123,19 +149,19 @@ class MyGroupToDoCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    width: heyDoDoPadding / 2,
-                  ),
-                  GestureDetector(
-                    onTap: () {},
-                    child: const SizedBox(
-                      child: Icon(
-                        Icons.share_outlined,
-                        color: HeyDoDoColors.light,
-                        size: heyDoDoPadding * 3,
-                      ),
-                    ),
-                  ),
+                  // const SizedBox(
+                  //   width: heyDoDoPadding / 2,
+                  // ),
+                  // GestureDetector(
+                  //   onTap: () {},
+                  //   child: const SizedBox(
+                  //     child: Icon(
+                  //       Icons.share_outlined,
+                  //       color: HeyDoDoColors.light,
+                  //       size: heyDoDoPadding * 3,
+                  //     ),
+                  //   ),
+                  // ),
                   const SizedBox(
                     width: heyDoDoPadding / 2,
                   ),
@@ -156,6 +182,9 @@ class MyGroupToDoCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const SizedBox(
+                    width: heyDoDoPadding / 2,
+                  ),
                   GestureDetector(
                     onTap: () {
                       groupToDo.isFavorite = groupToDo.isFavorite != null
@@ -172,6 +201,9 @@ class MyGroupToDoCard extends StatelessWidget {
                         size: heyDoDoPadding * 3,
                       ),
                     ),
+                  ),
+                  const SizedBox(
+                    width: heyDoDoPadding / 2,
                   ),
                 ],
               ))

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:heydodo/src/config/constants/colors.dart';
 import 'package:heydodo/src/config/constants/utils.dart';
 import 'package:heydodo/src/domain/entities/todo_entity.dart';
@@ -6,9 +8,8 @@ import 'package:heydodo/src/presentation/providers/group_todo_provider.dart';
 import 'package:heydodo/src/presentation/screens/my_todos/widgets/my_todo_list.dart';
 import 'package:heydodo/src/presentation/screens/screens.dart';
 import 'package:heydodo/src/presentation/widgets/empty_list_message.dart';
-import 'package:heydodo/src/presentation/widgets/floating_button.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:provider/provider.dart';
+
+import 'package:heydodo/src/presentation/lib/animations/slide_right_to_left_route_animation.dart';
 
 class MyToDosScreen extends StatefulWidget {
   const MyToDosScreen({super.key});
@@ -22,8 +23,8 @@ class _MyNotesScreenState extends State<MyToDosScreen>
   void _onCreateNewToDo() {
     GroupToDoEntity groupToDo = GroupToDoEntity();
 
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => ToDoScreen(groupToDo: groupToDo)));
+    Navigator.of(context)
+        .push(slideRightToLeftRouteAnimation(ToDoScreen(groupToDo: groupToDo)));
   }
 
   @override
@@ -59,18 +60,6 @@ class _MyNotesScreenState extends State<MyToDosScreen>
             ],
           );
         },
-      ),
-      floatingActionButton: HeyDoDoFloatingButton(
-        onPressed: () {
-          _onCreateNewToDo();
-        },
-        child: const SizedBox(
-          child: Icon(
-            Iconsax.add,
-            size: heyDoDoPadding * 4,
-            color: HeyDoDoColors.light,
-          ),
-        ),
       ),
     );
   }

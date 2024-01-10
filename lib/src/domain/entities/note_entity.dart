@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:intl/intl.dart';
 import 'package:objectbox/objectbox.dart';
 
@@ -10,12 +12,14 @@ class NoteEntity {
   String? title;
   bool isFavorite;
   bool isFixed;
+  Uint8List? image;
 
   NoteEntity(this.note,
       {this.id = 0,
       DateTime? createAt,
       this.title,
       this.isFavorite = false,
+      this.image,
       this.isFixed = false})
       : createAt = createAt ?? DateTime.now();
 

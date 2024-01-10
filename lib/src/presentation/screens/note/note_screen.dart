@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:heydodo/src/presentation/lib/helpers/image_picker.dart';
+import 'package:heydodo/src/presentation/screens/note/bloc/note_bloc.dart';
+import 'package:heydodo/src/presentation/widgets/button.dart';
+import 'package:heydodo/src/presentation/widgets/dialog.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:provider/provider.dart';
 
@@ -19,12 +25,22 @@ class NoteScreen extends StatefulWidget {
 class _NoteScreenState extends State<NoteScreen> {
   late final TextEditingController _titleController;
   late final TextEditingController _noteController;
+  late final ImageHelper _imageHelper;
+
+  late final NoteEntity _note;
+
+  late final NoteBloC _bloC;
 
   @override
   void initState() {
+    _note = widget.note;
+    _bloC = NoteBloC()..init(_note);
+    _imageHelper = ImageHelper(imagePicker: ImagePicker());
+
     _titleController = TextEditingController(
         text: widget.note.title ?? widget.note.dateFormatted);
     _noteController = TextEditingController(text: widget.note.note);
+
     super.initState();
   }
 
@@ -39,6 +55,31 @@ class _NoteScreenState extends State<NoteScreen> {
     Navigator.of(context).pop();
   }
 
+  _onPickImage(NoteEntity note) async {
+    try {
+      final file = await _imageHelper.pick();
+      if (file == null) return;
+
+      final bytes = _imageHelper.toBytes(file: file);
+      note.image = bytes;
+      print('image byte $bytes');
+      _bloC.update(note);
+      if (!mounted) return;
+
+      context.read<NoteProvider>().write(note);
+    } catch (e) {
+      showHeyDoDoAlert(
+          context: context,
+          title: '¡Oh no!',
+          content: const HeyDoDoDialogAlertContentText(text: [
+            TextSpan(text: 'Al parecer algo ha salido muy mal'),
+          ]),
+          buttons: [
+            const HeyDoDoAlertButtonConfirm(label: 'Aceptar'),
+          ]);
+    }
+  }
+
   @override
   void dispose() {
     _noteController.dispose();
@@ -48,21 +89,18 @@ class _NoteScreenState extends State<NoteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // HeyDoDoTheme.setStatusBarAndNavigationBarTheme(
-    //     color: HeyDoDoColors.primary, brightness: Brightness.light);
-    final note = widget.note;
     Size q = MediaQuery.of(context).size;
     return BackButtonListener(
       onBackButtonPressed: () async {
-        _onSaveNote(note);
+        _onSaveNote(_note);
         return true;
       },
       child: Scaffold(
-        backgroundColor: HeyDoDoColors.primary,
+        backgroundColor: HeyDoDoColors.white,
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
-              _onSaveNote(note);
+              _onSaveNote(_note);
             },
             icon: const Icon(
               Icons.arrow_back,
@@ -70,8 +108,8 @@ class _NoteScreenState extends State<NoteScreen> {
               color: HeyDoDoColors.light,
             ),
           ),
-          backgroundColor: HeyDoDoColors.primary,
-          surfaceTintColor: HeyDoDoColors.primary,
+          backgroundColor: HeyDoDoColors.white,
+          surfaceTintColor: HeyDoDoColors.white,
           title: Text(
             'Nota',
             style: Theme.of(context)
@@ -80,74 +118,173 @@ class _NoteScreenState extends State<NoteScreen> {
                 .copyWith(color: HeyDoDoColors.light, fontSize: 22.0),
           ),
           actions: [
-            Padding(
-              padding: const EdgeInsets.only(top: 3.5),
-              child: GestureDetector(
-                onTap: () {},
-                child: const SizedBox(
-                  child: Icon(
-                    Icons.share,
-                    color: HeyDoDoColors.light,
-                    size: heyDoDoPadding * 3,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: heyDoDoPadding,
-            )
+            // Padding(
+            //   padding: const EdgeInsets.only(top: 3.5),
+            //   child: GestureDetector(
+            //     onTap: () {},
+            //     child: const SizedBox(
+            //       child: Icon(
+            //         Icons.share,
+            //         color: HeyDoDoColors.light,
+            //         size: heyDoDoPadding * 3,
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            // const SizedBox(
+            //   width: heyDoDoPadding,
+            // )
           ],
         ),
         body: LayoutBuilder(
-          builder: (context, contraints) => Container(
-            decoration: const BoxDecoration(color: HeyDoDoColors.primary),
+          builder: (context, constraints) => SizedBox(
+            height: constraints.maxHeight,
             child: Padding(
               padding: const EdgeInsets.all(heyDoDoPadding),
               child: CustomScrollView(
                 slivers: [
-                  SliverAppBar(
-                    automaticallyImplyLeading: false,
-                    backgroundColor: HeyDoDoColors.primary,
-                    surfaceTintColor: HeyDoDoColors.primary,
-                    pinned: true,
-                    flexibleSpace: Container(
-                      alignment: Alignment.topCenter,
-                      child: TextFormField(
-                        controller: _titleController,
-                        maxLines: 3,
-                        cursorColor: HeyDoDoColors.light,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall!
-                            .copyWith(color: HeyDoDoColors.light),
-                        decoration: const InputDecoration(
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            errorBorder: InputBorder.none),
-                      ),
+                  SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Título:',
+                          softWrap: true,
+                          style: TextStyle(
+                              color: HeyDoDoColors.light, fontSize: 16.0),
+                        ),
+                        const SizedBox(
+                          height: heyDoDoPadding,
+                        ),
+                        TextFormField(
+                          controller: _titleController,
+                          cursorColor: HeyDoDoColors.light,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .copyWith(
+                                  color: HeyDoDoColors.light, fontSize: 18.0),
+                          decoration: const InputDecoration(
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              errorBorder: InputBorder.none),
+                        ),
+                      ],
                     ),
                   ),
                   const SliverToBoxAdapter(
                     child: SizedBox(
-                      height: heyDoDoPadding / 2,
+                      height: heyDoDoPadding,
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: StreamBuilder<NoteEntity>(
+                        stream: _bloC.stream,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData &&
+                              snapshot.data!.image != null) {
+                            return Container(
+                              clipBehavior: Clip.hardEdge,
+                              constraints:
+                                  const BoxConstraints(maxHeight: 240.0),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(24.0)),
+                              child: Ink(
+                                width: double.infinity,
+                                height: 240.0,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(24.0)),
+                                child: InkWell(
+                                  onTap: () {
+                                    _onPickImage(_note);
+                                  },
+                                  child: Image.memory(
+                                    snapshot.data!.image!,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+
+                          return Ink(
+                            width: double.infinity,
+                            height: 120,
+                            decoration: BoxDecoration(
+                                border: const Border.fromBorderSide(BorderSide(
+                                    color: HeyDoDoColors.medium, width: 1.4)),
+                                borderRadius: BorderRadius.circular(24.0)),
+                            child: InkWell(
+                              onTap: () {
+                                _onPickImage(_note);
+                              },
+                              child: const Padding(
+                                padding: EdgeInsets.all(6.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Iconsax.image,
+                                      size: 32.0,
+                                      color: HeyDoDoColors.medium,
+                                    ),
+                                    SizedBox(
+                                      height: heyDoDoPadding * 2,
+                                    ),
+                                    Text(
+                                      'Agregar imagen',
+                                      style: TextStyle(
+                                          color: HeyDoDoColors.medium,
+                                          fontSize: 18.0),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }),
+                  ),
+                  const SliverToBoxAdapter(
+                    child: SizedBox(
+                      height: heyDoDoPadding * 2,
                     ),
                   ),
                   SliverFillRemaining(
-                    child: TextFormField(
-                      controller: _noteController,
-                      keyboardType: TextInputType.multiline,
-                      textInputAction: TextInputAction.newline,
-                      autofocus: true,
-                      cursorColor: HeyDoDoColors.light,
-                      minLines: q.height.toInt(),
-                      maxLines: q.height.toInt(),
-                      style: const TextStyle(
-                          color: HeyDoDoColors.light,
-                          fontSize: heyDoDoPadding + 12.0),
-                      decoration: const InputDecoration(
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          errorBorder: InputBorder.none),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Nota:',
+                          style: TextStyle(
+                              color: HeyDoDoColors.light, fontSize: 16.0),
+                        ),
+                        const SizedBox(
+                          height: 3.5,
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            controller: _noteController,
+                            keyboardType: TextInputType.multiline,
+                            textInputAction: TextInputAction.newline,
+                            cursorColor: HeyDoDoColors.light,
+                            minLines: q.height.toInt(),
+                            maxLines: q.height.toInt(),
+                            style: const TextStyle(
+                                color: HeyDoDoColors.light,
+                                fontSize: heyDoDoPadding + 11.0),
+                            decoration: const InputDecoration(
+                                hintText:
+                                    'Describe tus ideas, crea increibles historias, escribe tus días',
+                                hintStyle: TextStyle(
+                                    color: HeyDoDoColors.light,
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.w300),
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                errorBorder: InputBorder.none),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -157,26 +294,11 @@ class _NoteScreenState extends State<NoteScreen> {
         ),
         bottomNavigationBar: Container(
           padding: const EdgeInsets.all(heyDoDoPadding * 2),
-          child: GestureDetector(
-            onTap: () {
-              _onSaveNote(note);
+          child: HeyDoDoButton(
+            onPressed: () {
+              _onSaveNote(_note);
             },
-            child: Container(
-              alignment: Alignment.center,
-              height: 56.0,
-              padding: const EdgeInsets.symmetric(
-                  horizontal: heyDoDoPadding * 5, vertical: heyDoDoPadding * 2),
-              decoration: BoxDecoration(
-                  color: HeyDoDoColors.secondary,
-                  borderRadius: BorderRadius.circular(24.0)),
-              child: const Text(
-                'Guardar',
-                style: TextStyle(
-                    color: HeyDoDoColors.white,
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.w500),
-              ),
-            ),
+            label: 'Guardar',
           ),
         ),
       ),
