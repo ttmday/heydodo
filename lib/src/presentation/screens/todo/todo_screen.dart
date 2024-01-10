@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:heydodo/src/presentation/lib/helpers/image_picker.dart';
 import 'package:heydodo/src/presentation/screens/todo/bloc/todo_bloc.dart';
+import 'package:heydodo/src/presentation/screens/todo/widgets/list_todos_completed.dart';
+import 'package:heydodo/src/presentation/screens/todo/widgets/list_todos_pending.dart';
 import 'package:heydodo/src/presentation/screens/todo/widgets/todo.dart';
 import 'package:heydodo/src/presentation/widgets/button.dart';
 import 'package:heydodo/src/presentation/widgets/dialog.dart';
+import 'package:heydodo/src/presentation/widgets/image_container.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 
@@ -51,6 +54,8 @@ class _ToDoScreenState extends State<ToDoScreen> {
     if (_todoController.text.isEmpty) {
       return;
     }
+
+    _bloC.setWrittingTodoStatus(0);
 
     group.title = _titleController.text;
     group.description = _descriptionController.text;
@@ -103,11 +108,19 @@ class _ToDoScreenState extends State<ToDoScreen> {
     }
   }
 
+  _onDeleteImage(GroupToDoEntity group) {
+    group.image = null;
+    _bloC.update(group);
+
+    context.read<GroupToDoProvider>().write(group);
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
     _todoController.dispose();
     _descriptionController.dispose();
+    _bloC.dispose();
     super.dispose();
   }
 
@@ -140,309 +153,303 @@ class _ToDoScreenState extends State<ToDoScreen> {
                 .headlineSmall!
                 .copyWith(color: HeyDoDoColors.light),
           ),
-          actions: [
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 3.5),
-            //   child: GestureDetector(
-            //     onTap: () {},
-            //     child: const SizedBox(
-            //       child: Icon(
-            //         Icons.share,
-            //         color: HeyDoDoColors.light,
-            //         size: heyDoDoPadding * 3,
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            // const SizedBox(
-            //   width: heyDoDoPadding,
-            // ),
-          ],
         ),
         body: LayoutBuilder(
           builder: (context, contraints) => Container(
             decoration: const BoxDecoration(color: HeyDoDoColors.white),
-            child: Padding(
-              padding: const EdgeInsets.all(heyDoDoPadding),
-              child: CustomScrollView(
-                slivers: [
-                  SliverPadding(
-                      padding: const EdgeInsets.all(heyDoDoPadding),
-                      sliver: SliverToBoxAdapter(
-                          child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Título:',
-                            softWrap: true,
-                            style: TextStyle(
-                                color: HeyDoDoColors.light, fontSize: 12.0),
-                          ),
-                          const SizedBox(
-                            height: heyDoDoPadding,
-                          ),
-                          TextFormField(
-                            controller: _titleController,
-                            cursorColor: HeyDoDoColors.light,
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineSmall!
-                                .copyWith(
-                                  color: HeyDoDoColors.light,
-                                  fontSize: 18.0,
-                                ),
-                            decoration: const InputDecoration(
-                                enabledBorder: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                errorBorder: InputBorder.none),
-                          ),
-                        ],
-                      ))),
-                  SliverToBoxAdapter(
-                    child: StreamBuilder<GroupToDoEntity>(
-                        stream: _bloC.stream,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData &&
-                              snapshot.data!.image != null) {
-                            return Container(
-                              clipBehavior: Clip.hardEdge,
-                              constraints:
-                                  const BoxConstraints(maxHeight: 240.0),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(24.0)),
-                              child: Ink(
-                                width: double.infinity,
-                                height: 240.0,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(24.0)),
-                                child: InkWell(
-                                  onTap: () {
-                                    _onPickImage(group);
-                                  },
-                                  child: Image.memory(
-                                    snapshot.data!.image!,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-
-                          return Ink(
-                            width: double.infinity,
-                            height: 120,
-                            decoration: BoxDecoration(
-                                border: const Border.fromBorderSide(BorderSide(
-                                    color: HeyDoDoColors.medium, width: 1.4)),
-                                borderRadius: BorderRadius.circular(24.0)),
-                            child: InkWell(
-                              onTap: () {
-                                _onPickImage(group);
-                              },
-                              child: const Padding(
-                                padding: EdgeInsets.all(6.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Iconsax.image,
-                                      size: 32.0,
-                                      color: HeyDoDoColors.medium,
-                                    ),
-                                    SizedBox(
-                                      height: heyDoDoPadding * 2,
-                                    ),
-                                    Text(
-                                      'Agregar imagen',
-                                      style: TextStyle(
-                                          color: HeyDoDoColors.medium,
-                                          fontSize: 18.0),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
+            child: CustomScrollView(
+              slivers: [
+                StreamBuilder<GroupToDoEntity>(
+                    stream: _bloC.stream,
+                    builder: (context, snapshot) {
+                      return SliverAppBar(
+                          automaticallyImplyLeading: false,
+                          collapsedHeight: 240.0,
+                          expandedHeight: 240.0,
+                          flexibleSpace: ImageContainer(
+                            image: snapshot.data?.image,
+                            onImageTap: () => _onPickImage(group),
+                            onImageDelete: () => _onDeleteImage(group),
+                          ));
+                    }),
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: heyDoDoPadding * 2,
                   ),
-                  const SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: heyDoDoPadding * 2,
-                    ),
-                  ),
-                  SliverPadding(
+                ),
+                SliverPadding(
                     padding: const EdgeInsets.all(heyDoDoPadding),
                     sliver: SliverToBoxAdapter(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            'ToDo',
-                            style: TextStyle(
-                                color: HeyDoDoColors.light, fontSize: 12.0),
-                          ),
-                          const SizedBox(
-                            height: heyDoDoPadding,
-                          ),
-                          TextFormField(
-                            controller: _todoController,
-                            keyboardType: TextInputType.multiline,
-                            onSaved: (String? value) {
-                              _onSaveToDo(group);
-                            },
-                            cursorColor: HeyDoDoColors.light,
-                            style: const TextStyle(
-                                color: HeyDoDoColors.light, fontSize: 16.0),
-                            decoration: const InputDecoration(
-                                enabledBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: HeyDoDoColors.secondary)),
-                                focusedBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: HeyDoDoColors.secondary)),
-                                errorBorder: UnderlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: HeyDoDoColors.secondary))),
-                          ),
-                          const SizedBox(
-                            height: heyDoDoPadding * 2,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              if (_todoController.text.isNotEmpty)
-                                GestureDetector(
-                                  onTap: () {
-                                    _todoController.clear();
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: heyDoDoPadding * 5,
-                                        vertical: heyDoDoPadding),
-                                    decoration: BoxDecoration(
-                                        color: HeyDoDoColors.medium,
-                                        borderRadius:
-                                            BorderRadius.circular(24.0)),
-                                    child: const Text(
-                                      'Cancelar',
-                                      style: TextStyle(
-                                          color: HeyDoDoColors.white,
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.w500),
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Título:',
+                          softWrap: true,
+                          style: TextStyle(
+                              color: HeyDoDoColors.light, fontSize: 12.0),
+                        ),
+                        const SizedBox(
+                          height: heyDoDoPadding,
+                        ),
+                        TextFormField(
+                          controller: _titleController,
+                          cursorColor: HeyDoDoColors.light,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall!
+                              .copyWith(
+                                color: HeyDoDoColors.light,
+                                fontSize: 18.0,
+                              ),
+                          decoration: const InputDecoration(
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              errorBorder: InputBorder.none),
+                        ),
+                      ],
+                    ))),
+                SliverPadding(
+                  padding: const EdgeInsets.all(heyDoDoPadding),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'ToDo',
+                          style: TextStyle(
+                              color: HeyDoDoColors.light, fontSize: 12.0),
+                        ),
+                        const SizedBox(
+                          height: heyDoDoPadding,
+                        ),
+                        TextFormField(
+                          controller: _todoController,
+                          keyboardType: TextInputType.multiline,
+                          onSaved: (String? value) {
+                            _onSaveToDo(group);
+                          },
+                          cursorColor: HeyDoDoColors.light,
+                          style: const TextStyle(
+                              color: HeyDoDoColors.light, fontSize: 16.0),
+                          decoration: InputDecoration(
+                              suffixIcon: _todoController.text.isNotEmpty
+                                  ? IconButton(
+                                      onPressed: () {
+                                        _todoController.clear();
+                                        setState(() {});
+                                      },
+                                      icon: const Icon(Icons.cancel,
+                                          color: HeyDoDoColors.medium))
+                                  : null,
+                              enabledBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: HeyDoDoColors.secondary)),
+                              focusedBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: HeyDoDoColors.secondary)),
+                              errorBorder: const UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: HeyDoDoColors.secondary))),
+                        ),
+                        const SizedBox(
+                          height: heyDoDoPadding * 2,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            // StreamBuilder<int>(
+                            //     stream: _bloC.newTodoWrittingStream,
+                            //     initialData: 0,
+                            //     builder: (context, snapshot) {
+                            //       if (snapshot.data == 0) {
+                            //         return const SizedBox.shrink();
+                            //       }
+
+                            //       return GestureDetector(
+                            //         onTap: () {
+                            //           _todoController.clear();
+                            //           _bloC.setWrittingTodoStatus(0);
+                            //         },
+                            //         child: Container(
+                            //           padding: const EdgeInsets.symmetric(
+                            //               horizontal: heyDoDoPadding * 5,
+                            //               vertical: heyDoDoPadding),
+                            //           decoration: BoxDecoration(
+                            //               color: HeyDoDoColors.medium,
+                            //               borderRadius:
+                            //                   BorderRadius.circular(24.0)),
+                            //           child: const Text(
+                            //             'Cancelar',
+                            //             style: TextStyle(
+                            //                 color: HeyDoDoColors.white,
+                            //                 fontSize: 16.0,
+                            //                 fontWeight: FontWeight.w500),
+                            //           ),
+                            //         ),
+                            //       );
+                            //     }),
+                            const SizedBox(
+                              width: heyDoDoPadding,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                _onSaveToDo(group);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: heyDoDoPadding * 5,
+                                    vertical: heyDoDoPadding),
+                                decoration: BoxDecoration(
+                                    color: HeyDoDoColors.secondary,
+                                    borderRadius: BorderRadius.circular(24.0)),
+                                child: const Text(
+                                  'Crear',
+                                  style: TextStyle(
+                                      color: HeyDoDoColors.white,
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: heyDoDoPadding * 2),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.all(heyDoDoPadding),
+                  sliver: SliverToBoxAdapter(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: StreamBuilder<int>(
+                          stream: _bloC.paginatorStream,
+                          initialData: 0,
+                          builder: (context, snapshot) {
+                            return Row(
+                              children: [
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      _bloC.setCurrentPage(0);
+                                    },
+                                    child: SizedBox(
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.center,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0,
+                                                vertical: 12.0),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                            ),
+                                            child: Text(
+                                              'Pendientes',
+                                              style: TextStyle(
+                                                color: snapshot.data == 0
+                                                    ? HeyDoDoColors.medium
+                                                    : HeyDoDoColors.white,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ),
+                                          AnimatedContainer(
+                                            duration: const Duration(
+                                                milliseconds: 450),
+                                            width: snapshot.data == 0
+                                                ? double.infinity
+                                                : 0,
+                                            height:
+                                                snapshot.data == 0 ? 7.0 : 0,
+                                            decoration: BoxDecoration(
+                                                color: HeyDoDoColors.medium,
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        24.0)),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              const SizedBox(
-                                width: heyDoDoPadding,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  _onSaveToDo(group);
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: heyDoDoPadding * 5,
-                                      vertical: heyDoDoPadding),
-                                  decoration: BoxDecoration(
-                                      color: HeyDoDoColors.secondary,
-                                      borderRadius:
-                                          BorderRadius.circular(24.0)),
-                                  child: const Text(
-                                    'Crear',
-                                    style: TextStyle(
-                                        color: HeyDoDoColors.white,
-                                        fontSize: 16.0,
-                                        fontWeight: FontWeight.w500),
-                                  ),
+                                const SizedBox(
+                                  width: heyDoDoPadding,
                                 ),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      _bloC.setCurrentPage(1);
+                                    },
+                                    child: SizedBox(
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            alignment: Alignment.center,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0,
+                                                vertical: 12.0),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                            ),
+                                            child: Text(
+                                              'Completados',
+                                              style: TextStyle(
+                                                color: snapshot.data == 1
+                                                    ? HeyDoDoColors.medium
+                                                        .withOpacity(.25)
+                                                    : HeyDoDoColors.medium
+                                                        .withOpacity(.15),
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                          ),
+                                          AnimatedContainer(
+                                              duration: const Duration(
+                                                  milliseconds: 450),
+                                              width: snapshot.data == 1
+                                                  ? double.infinity
+                                                  : 0,
+                                              height:
+                                                  snapshot.data == 1 ? 7.0 : 0,
+                                              decoration: BoxDecoration(
+                                                  color: HeyDoDoColors.medium,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          24.0))),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            );
+                          }),
                     ),
                   ),
-                  const SliverToBoxAdapter(
-                    child: SizedBox(height: heyDoDoPadding),
+                ),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: heyDoDoPadding),
+                ),
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 300.0,
+                    child: PageView(
+                      children: [
+                        ListTodosPending(group: group),
+                        ListTodosCompleted(group: group)
+                      ],
+                    ),
                   ),
-                  Consumer<ToDoProvider>(builder: (context, provider, _) {
-                    return provider.todos.isNotEmpty
-                        ? SliverList.builder(
-                            itemCount: provider.todos.length,
-                            itemBuilder: (context, index) {
-                              final todo = provider.todos[index];
-                              if (todo.isCompleted!) {
-                                return const SizedBox.shrink();
-                              }
-                              return GestureDetector(
-                                  onTap: () {
-                                    _todoController.text = todo.text;
-                                  },
-                                  child: ToDo(todo: todo, group: group));
-                            },
-                          )
-                        : const SliverToBoxAdapter(
-                            child: SizedBox.shrink(),
-                          );
-                  }),
-                  Consumer<ToDoProvider>(builder: (context, provider, _) {
-                    final completes = provider.todos
-                        .where((element) => element.isCompleted!)
-                        .toList()
-                        .length;
-
-                    if (completes > 0) {
-                      return const SliverPadding(
-                        padding: EdgeInsets.all(heyDoDoPadding),
-                        sliver: SliverToBoxAdapter(
-                          child: Text(
-                            'Completados',
-                            style: TextStyle(
-                              color: HeyDoDoColors.light,
-                              fontSize: 12.0,
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-
-                    return const SliverToBoxAdapter(
-                      child: SizedBox.shrink(),
-                    );
-                  }),
-                  Consumer<ToDoProvider>(builder: (context, provider, _) {
-                    return SliverList.builder(
-                      itemCount: provider.todos.length,
-                      itemBuilder: (context, index) {
-                        final todo = provider.todos[index];
-                        if (!todo.isCompleted!) {
-                          return const SizedBox.shrink();
-                        }
-                        return Draggable(
-                          data: GestureDetector(
-                            onTap: () {
-                              _todoController.text = todo.text;
-                            },
-                            child: ToDo(
-                              todo: todo,
-                              group: group,
-                            ),
-                          ),
-                          feedback: ToDo(
-                            todo: todo,
-                            group: group,
-                          ),
-                          child: ToDo(
-                            todo: todo,
-                            group: group,
-                          ),
-                        );
-                      },
-                    );
-                  })
-                ],
-              ),
+                )
+              ],
             ),
           ),
         ),

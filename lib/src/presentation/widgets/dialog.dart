@@ -31,6 +31,7 @@ class HeyDoDoDialogAlert extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
         backgroundColor: HeyDoDoColors.white,
+        surfaceTintColor: HeyDoDoColors.white,
         contentPadding: contentPadding,
         insetPadding: const EdgeInsets.all(heyDoDoPadding * 2),
         shape: const RoundedRectangleBorder(

@@ -3,6 +3,7 @@ import 'package:heydodo/src/presentation/lib/helpers/image_picker.dart';
 import 'package:heydodo/src/presentation/screens/note/bloc/note_bloc.dart';
 import 'package:heydodo/src/presentation/widgets/button.dart';
 import 'package:heydodo/src/presentation/widgets/dialog.dart';
+import 'package:heydodo/src/presentation/widgets/image_container.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -62,7 +63,6 @@ class _NoteScreenState extends State<NoteScreen> {
 
       final bytes = _imageHelper.toBytes(file: file);
       note.image = bytes;
-      print('image byte $bytes');
       _bloC.update(note);
       if (!mounted) return;
 
@@ -78,6 +78,13 @@ class _NoteScreenState extends State<NoteScreen> {
             const HeyDoDoAlertButtonConfirm(label: 'Aceptar'),
           ]);
     }
+  }
+
+  _onDeleteImage(NoteEntity note) {
+    note.image = null;
+    _bloC.update(note);
+
+    context.read<NoteProvider>().write(note);
   }
 
   @override
@@ -117,33 +124,34 @@ class _NoteScreenState extends State<NoteScreen> {
                 .headlineSmall!
                 .copyWith(color: HeyDoDoColors.light, fontSize: 22.0),
           ),
-          actions: [
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 3.5),
-            //   child: GestureDetector(
-            //     onTap: () {},
-            //     child: const SizedBox(
-            //       child: Icon(
-            //         Icons.share,
-            //         color: HeyDoDoColors.light,
-            //         size: heyDoDoPadding * 3,
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            // const SizedBox(
-            //   width: heyDoDoPadding,
-            // )
-          ],
         ),
         body: LayoutBuilder(
           builder: (context, constraints) => SizedBox(
             height: constraints.maxHeight,
-            child: Padding(
-              padding: const EdgeInsets.all(heyDoDoPadding),
-              child: CustomScrollView(
-                slivers: [
-                  SliverToBoxAdapter(
+            child: CustomScrollView(
+              slivers: [
+                StreamBuilder<NoteEntity>(
+                  stream: _bloC.stream,
+                  builder: (context, snapshot) {
+                    return SliverAppBar(
+                        automaticallyImplyLeading: false,
+                        collapsedHeight: 240.0,
+                        expandedHeight: 240.0,
+                        flexibleSpace: ImageContainer(
+                          image: snapshot.data?.image,
+                          onImageTap: () => _onPickImage(_note),
+                          onImageDelete: () => _onDeleteImage(_note),
+                        ));
+                  },
+                ),
+                const SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: heyDoDoPadding * 2,
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.all(heyDoDoPadding),
+                  sliver: SliverToBoxAdapter(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -172,84 +180,10 @@ class _NoteScreenState extends State<NoteScreen> {
                       ],
                     ),
                   ),
-                  const SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: heyDoDoPadding,
-                    ),
-                  ),
-                  SliverToBoxAdapter(
-                    child: StreamBuilder<NoteEntity>(
-                        stream: _bloC.stream,
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData &&
-                              snapshot.data!.image != null) {
-                            return Container(
-                              clipBehavior: Clip.hardEdge,
-                              constraints:
-                                  const BoxConstraints(maxHeight: 240.0),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(24.0)),
-                              child: Ink(
-                                width: double.infinity,
-                                height: 240.0,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(24.0)),
-                                child: InkWell(
-                                  onTap: () {
-                                    _onPickImage(_note);
-                                  },
-                                  child: Image.memory(
-                                    snapshot.data!.image!,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-
-                          return Ink(
-                            width: double.infinity,
-                            height: 120,
-                            decoration: BoxDecoration(
-                                border: const Border.fromBorderSide(BorderSide(
-                                    color: HeyDoDoColors.medium, width: 1.4)),
-                                borderRadius: BorderRadius.circular(24.0)),
-                            child: InkWell(
-                              onTap: () {
-                                _onPickImage(_note);
-                              },
-                              child: const Padding(
-                                padding: EdgeInsets.all(6.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Iconsax.image,
-                                      size: 32.0,
-                                      color: HeyDoDoColors.medium,
-                                    ),
-                                    SizedBox(
-                                      height: heyDoDoPadding * 2,
-                                    ),
-                                    Text(
-                                      'Agregar imagen',
-                                      style: TextStyle(
-                                          color: HeyDoDoColors.medium,
-                                          fontSize: 18.0),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                  ),
-                  const SliverToBoxAdapter(
-                    child: SizedBox(
-                      height: heyDoDoPadding * 2,
-                    ),
-                  ),
-                  SliverFillRemaining(
+                ),
+                SliverFillRemaining(
+                  child: Padding(
+                    padding: const EdgeInsets.all(heyDoDoPadding),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -287,8 +221,8 @@ class _NoteScreenState extends State<NoteScreen> {
                       ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
