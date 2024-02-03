@@ -13,8 +13,8 @@ import 'package:provider/provider.dart';
 import 'package:heydodo/src/config/constants/colors.dart';
 import 'package:heydodo/src/config/constants/utils.dart';
 import 'package:heydodo/src/domain/entities/todo_entity.dart';
-import 'package:heydodo/src/presentation/providers/group_todo_provider.dart';
-import 'package:heydodo/src/presentation/providers/todo_provider.dart';
+import 'package:heydodo/src/presentation/lib/providers/group_todo_provider.dart';
+import 'package:heydodo/src/presentation/lib/providers/todo_provider.dart';
 
 class ToDoScreen extends StatefulWidget {
   final GroupToDoEntity groupToDo;

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:heydodo/src/presentation/lib/helpers/image_picker.dart';
 import 'package:heydodo/src/presentation/screens/note/bloc/note_bloc.dart';
 import 'package:heydodo/src/presentation/widgets/button.dart';
 import 'package:heydodo/src/presentation/widgets/dialog.dart';
 import 'package:heydodo/src/presentation/widgets/image_container.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:image_picker/image_picker.dart';
 
-import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'package:heydodo/src/config/constants/colors.dart';
 
 import 'package:heydodo/src/config/constants/utils.dart';
 import 'package:heydodo/src/domain/entities/note_entity.dart';
-import 'package:heydodo/src/presentation/providers/note_provider.dart';
+import 'package:heydodo/src/presentation/lib/providers/note_provider.dart';
 
 class NoteScreen extends StatefulWidget {
   final NoteEntity note;

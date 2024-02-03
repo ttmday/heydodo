@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:heydodo/src/config/constants/colors.dart';
 import 'package:heydodo/src/config/constants/utils.dart';
 import 'package:heydodo/src/domain/entities/todo_entity.dart';
-import 'package:heydodo/src/presentation/providers/todo_provider.dart';
+import 'package:heydodo/src/presentation/lib/providers/todo_provider.dart';
 
 class ToDo extends StatelessWidget {
   const ToDo({

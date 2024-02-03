@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:heydodo/objectbox.g.dart';
-import 'package:heydodo/src/presentation/providers/group_todo_provider.dart';
-import 'package:heydodo/src/presentation/providers/store_provider.dart';
-import 'package:heydodo/src/presentation/providers/todo_provider.dart';
+import 'package:heydodo/src/presentation/lib/providers/group_todo_provider.dart';
+import 'package:heydodo/src/presentation/lib/providers/store_provider.dart';
+import 'package:heydodo/src/presentation/lib/providers/todo_provider.dart';
 
 import 'package:provider/provider.dart';
 
 import 'package:heydodo/src/config/router/router.dart';
-import 'package:heydodo/src/presentation/providers/note_provider.dart';
+import 'package:heydodo/src/presentation/lib/providers/note_provider.dart';
 
 import 'package:heydodo/src/config/constants/theme.dart';
 

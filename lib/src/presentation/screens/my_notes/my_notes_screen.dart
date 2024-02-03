@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:heydodo/src/config/constants/colors.dart';
 import 'package:heydodo/src/config/constants/utils.dart';
 import 'package:heydodo/src/domain/entities/note_entity.dart';
-import 'package:heydodo/src/presentation/providers/note_provider.dart';
+import 'package:heydodo/src/presentation/lib/providers/note_provider.dart';
 import 'package:heydodo/src/presentation/screens/my_notes/widgets/my_note_list.dart';
 import 'package:heydodo/src/presentation/screens/screens.dart';
 import 'package:heydodo/src/presentation/widgets/empty_list_message.dart';
@@ -19,10 +19,12 @@ class MyNotesScreen extends StatefulWidget {
 
 class _MyNotesScreenState extends State<MyNotesScreen>
     with AutomaticKeepAliveClientMixin {
-  void _onCreateNewNote() {
-    NoteEntity note = NoteEntity('');
-    Navigator.of(context)
-        .push(slideRightToLeftRouteAnimation(NoteScreen(note: note)));
+  bool _keepAlive = true;
+
+  @override
+  void dispose() {
+    _keepAlive = false;
+    super.dispose();
   }
 
   @override
@@ -63,5 +65,11 @@ class _MyNotesScreenState extends State<MyNotesScreen>
   }
 
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => _keepAlive;
+
+  void _onCreateNewNote() {
+    NoteEntity note = NoteEntity('');
+    Navigator.of(context)
+        .push(slideRightToLeftRouteAnimation(NoteScreen(note: note)));
+  }
 }

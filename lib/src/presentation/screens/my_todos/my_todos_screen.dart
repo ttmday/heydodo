@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:heydodo/src/config/constants/colors.dart';
 import 'package:heydodo/src/config/constants/utils.dart';
 import 'package:heydodo/src/domain/entities/todo_entity.dart';
-import 'package:heydodo/src/presentation/providers/group_todo_provider.dart';
+import 'package:heydodo/src/presentation/lib/providers/group_todo_provider.dart';
 import 'package:heydodo/src/presentation/screens/my_todos/widgets/my_todo_list.dart';
 import 'package:heydodo/src/presentation/screens/screens.dart';
 import 'package:heydodo/src/presentation/widgets/empty_list_message.dart';
@@ -15,16 +15,17 @@ class MyToDosScreen extends StatefulWidget {
   const MyToDosScreen({super.key});
 
   @override
-  State<MyToDosScreen> createState() => _MyNotesScreenState();
+  State<MyToDosScreen> createState() => _MyToDosScreenState();
 }
 
-class _MyNotesScreenState extends State<MyToDosScreen>
+class _MyToDosScreenState extends State<MyToDosScreen>
     with AutomaticKeepAliveClientMixin {
-  void _onCreateNewToDo() {
-    GroupToDoEntity groupToDo = GroupToDoEntity();
+  bool _keepAlive = true;
 
-    Navigator.of(context)
-        .push(slideRightToLeftRouteAnimation(ToDoScreen(groupToDo: groupToDo)));
+  @override
+  void dispose() {
+    _keepAlive = false;
+    super.dispose();
   }
 
   @override
@@ -65,5 +66,12 @@ class _MyNotesScreenState extends State<MyToDosScreen>
   }
 
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => _keepAlive;
+
+  void _onCreateNewToDo() {
+    GroupToDoEntity groupToDo = GroupToDoEntity();
+
+    Navigator.of(context)
+        .push(slideRightToLeftRouteAnimation(ToDoScreen(groupToDo: groupToDo)));
+  }
 }

@@ -6,7 +6,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:heydodo/src/config/constants/colors.dart';
 import 'package:heydodo/src/config/constants/utils.dart';
 import 'package:heydodo/src/domain/entities/note_entity.dart';
-import 'package:heydodo/src/presentation/providers/note_provider.dart';
+import 'package:heydodo/src/presentation/lib/providers/note_provider.dart';
 import 'package:heydodo/src/presentation/screens/screens.dart';
 
 class MyNoteCard extends StatelessWidget {
@@ -129,19 +129,6 @@ class MyNoteCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // const SizedBox(
-                    //   width: heyDoDoPadding / 2,
-                    // ),
-                    // GestureDetector(
-                    //   onTap: () {},
-                    //   child: const SizedBox(
-                    //     child: Icon(
-                    //       Icons.share_outlined,
-                    //       color: HeyDoDoColors.light,
-                    //       size: heyDoDoPadding * 3,
-                    //     ),
-                    //   ),
-                    // ),
                     const SizedBox(
                       width: heyDoDoPadding / 2,
                     ),

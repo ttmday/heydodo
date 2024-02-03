@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:heydodo/src/domain/entities/todo_entity.dart';
-import 'package:heydodo/src/presentation/providers/todo_provider.dart';
-import 'package:heydodo/src/presentation/screens/todo/widgets/todo.dart';
 import 'package:provider/provider.dart';
+
+import 'package:heydodo/src/domain/entities/todo_entity.dart';
+import 'package:heydodo/src/presentation/lib/providers/todo_provider.dart';
+import 'package:heydodo/src/presentation/screens/todo/widgets/todo.dart';
 
 class ListTodosCompleted extends StatelessWidget {
   const ListTodosCompleted({required this.group, super.key});

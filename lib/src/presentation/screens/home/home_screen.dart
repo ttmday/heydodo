@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:heydodo/src/presentation/screens/home/bloc/home_bloc.dart';
-import 'package:heydodo/src/presentation/widgets/floating_button.dart';
+
 import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 
-import 'package:heydodo/src/presentation/providers/group_todo_provider.dart';
+import 'package:heydodo/src/presentation/lib/providers/group_todo_provider.dart';
 import 'package:heydodo/src/presentation/screens/my_notes/my_notes_screen.dart';
 import 'package:heydodo/src/presentation/screens/my_todos/my_todos_screen.dart';
-
+import 'package:heydodo/src/presentation/screens/home/bloc/home_bloc.dart';
+import 'package:heydodo/src/presentation/widgets/floating_button.dart';
 import 'package:heydodo/src/config/constants/colors.dart';
 import 'package:heydodo/src/config/constants/theme.dart';
 
 import 'package:heydodo/src/config/constants/utils.dart';
-import 'package:heydodo/src/presentation/providers/note_provider.dart';
-import 'package:heydodo/src/presentation/providers/store_provider.dart';
+import 'package:heydodo/src/presentation/lib/providers/note_provider.dart';
+import 'package:heydodo/src/presentation/lib/providers/store_provider.dart';
 
 import 'package:heydodo/src/presentation/screens/home/widgets/navigationbar.dart';
 
