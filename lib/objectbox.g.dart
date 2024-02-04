@@ -23,7 +23,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(1, 6862108361595227655),
       name: 'NoteEntity',
-      lastPropertyId: const IdUid(7, 1493677288048773510),
+      lastPropertyId: const IdUid(8, 6337840827733730960),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -60,6 +60,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(7, 1493677288048773510),
             name: 'image',
             type: 23,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 6337840827733730960),
+            name: 'color',
+            type: 6,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -103,7 +108,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(4, 5622547392139153183),
       name: 'GroupToDoEntity',
-      lastPropertyId: const IdUid(7, 1189230327323287854),
+      lastPropertyId: const IdUid(8, 530225373659667565),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -140,6 +145,11 @@ final _entities = <ModelEntity>[
             id: const IdUid(7, 1189230327323287854),
             name: 'image',
             type: 23,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(8, 530225373659667565),
+            name: 'color',
+            type: 6,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -209,7 +219,7 @@ ModelDefinition getObjectBoxModel() {
               object.title == null ? null : fbb.writeString(object.title!);
           final imageOffset =
               object.image == null ? null : fbb.writeListInt8(object.image!);
-          fbb.startTable(8);
+          fbb.startTable(9);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, noteOffset);
           fbb.addInt64(2, object.createAt.millisecondsSinceEpoch);
@@ -217,6 +227,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addBool(4, object.isFavorite);
           fbb.addBool(5, object.isFixed);
           fbb.addOffset(6, imageOffset);
+          fbb.addInt64(7, object.color);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -237,13 +248,16 @@ ModelDefinition getObjectBoxModel() {
               .vTableGetNullable(buffer, rootOffset, 16) as Uint8List?;
           final isFixedParam =
               const fb.BoolReader().vTableGet(buffer, rootOffset, 14, false);
+          final colorParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 18);
           final object = NoteEntity(noteParam,
               id: idParam,
               createAt: createAtParam,
               title: titleParam,
               isFavorite: isFavoriteParam,
               image: imageParam,
-              isFixed: isFixedParam);
+              isFixed: isFixedParam,
+              color: colorParam);
 
           return object;
         }),
@@ -306,7 +320,7 @@ ModelDefinition getObjectBoxModel() {
               object.title == null ? null : fbb.writeString(object.title!);
           final imageOffset =
               object.image == null ? null : fbb.writeListInt8(object.image!);
-          fbb.startTable(8);
+          fbb.startTable(9);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, descriptionOffset);
           fbb.addInt64(2, object.createAt.millisecondsSinceEpoch);
@@ -314,6 +328,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addBool(4, object.isFavorite);
           fbb.addBool(5, object.isFixed);
           fbb.addOffset(6, imageOffset);
+          fbb.addInt64(7, object.color);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -335,6 +350,8 @@ ModelDefinition getObjectBoxModel() {
               .vTableGetNullable(buffer, rootOffset, 16) as Uint8List?;
           final isFixedParam =
               const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 14);
+          final colorParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 18);
           final object = GroupToDoEntity(
               id: idParam,
               description: descriptionParam,
@@ -342,7 +359,8 @@ ModelDefinition getObjectBoxModel() {
               title: titleParam,
               isFavorite: isFavoriteParam,
               image: imageParam,
-              isFixed: isFixedParam);
+              isFixed: isFixedParam,
+              color: colorParam);
           InternalToManyAccess.setRelInfo<GroupToDoEntity>(
               object.todos,
               store,
@@ -384,6 +402,10 @@ class NoteEntity_ {
   /// see [NoteEntity.image]
   static final image =
       QueryByteVectorProperty<NoteEntity>(_entities[0].properties[6]);
+
+  /// see [NoteEntity.color]
+  static final color =
+      QueryIntegerProperty<NoteEntity>(_entities[0].properties[7]);
 }
 
 /// [ToDoEntity] entity fields to define ObjectBox queries.
@@ -438,4 +460,8 @@ class GroupToDoEntity_ {
   /// see [GroupToDoEntity.image]
   static final image =
       QueryByteVectorProperty<GroupToDoEntity>(_entities[2].properties[6]);
+
+  /// see [GroupToDoEntity.color]
+  static final color =
+      QueryIntegerProperty<GroupToDoEntity>(_entities[2].properties[7]);
 }

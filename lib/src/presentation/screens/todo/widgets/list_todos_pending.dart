@@ -13,13 +13,15 @@ class ListTodosPending extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ToDoProvider>(builder: (context, provider, _) {
-      return ListView.builder(
+      return SliverList.builder(
         itemCount: provider.todos.length,
         itemBuilder: (context, index) {
           final todo = provider.todos[index];
-          if (!todo.isCompleted!) {
+
+          if (todo.isCompleted!) {
             return const SizedBox.shrink();
           }
+
           return ToDo(
             todo: todo,
             group: group,

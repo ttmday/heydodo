@@ -13,15 +13,18 @@ class NoteEntity {
   bool isFavorite;
   bool isFixed;
   Uint8List? image;
+  int? color;
 
-  NoteEntity(this.note,
-      {this.id = 0,
-      DateTime? createAt,
-      this.title,
-      this.isFavorite = false,
-      this.image,
-      this.isFixed = false})
-      : createAt = createAt ?? DateTime.now();
+  NoteEntity(
+    this.note, {
+    this.id = 0,
+    DateTime? createAt,
+    this.title,
+    this.isFavorite = false,
+    this.image,
+    this.isFixed = false,
+    this.color,
+  }) : createAt = createAt ?? DateTime.now();
 
   String get dateFormatted => DateFormat('dd/MM/yyyy').format(createAt);
 }

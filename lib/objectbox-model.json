@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:6862108361595227655",
-      "lastPropertyId": "7:1493677288048773510",
+      "lastPropertyId": "8:6337840827733730960",
       "name": "NoteEntity",
       "properties": [
         {
@@ -43,6 +43,11 @@
           "id": "7:1493677288048773510",
           "name": "image",
           "type": 23
+        },
+        {
+          "id": "8:6337840827733730960",
+          "name": "color",
+          "type": 6
         }
       ],
       "relations": []
@@ -86,7 +91,7 @@
     },
     {
       "id": "4:5622547392139153183",
-      "lastPropertyId": "7:1189230327323287854",
+      "lastPropertyId": "8:530225373659667565",
       "name": "GroupToDoEntity",
       "properties": [
         {
@@ -124,6 +129,11 @@
           "id": "7:1189230327323287854",
           "name": "image",
           "type": 23
+        },
+        {
+          "id": "8:530225373659667565",
+          "name": "color",
+          "type": 6
         }
       ],
       "relations": []

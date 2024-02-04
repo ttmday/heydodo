@@ -35,7 +35,9 @@ class MyGroupToDoCard extends StatelessWidget {
                   horizontal: heyDoDoPadding * 2, vertical: heyDoDoPadding),
               height: 130.0,
               decoration: BoxDecoration(
-                  color: HeyDoDoColors.secondary,
+                  color: groupToDo.color != null
+                      ? Color(groupToDo.color!)
+                      : HeyDoDoColors.secondary,
                   borderRadius: BorderRadius.circular(24.0)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,7 +124,7 @@ class MyGroupToDoCard extends StatelessWidget {
                                 text:
                                     'Al presionar continuar se eliminará permanentemente el grupo ToDo '),
                             TextSpan(
-                                text: '${groupToDo.title}',
+                                text: groupToDo.title ?? '',
                                 style: const TextStyle(
                                     color: HeyDoDoColors.medium, fontSize: 18))
                           ]),
@@ -149,19 +151,6 @@ class MyGroupToDoCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // const SizedBox(
-                  //   width: heyDoDoPadding / 2,
-                  // ),
-                  // GestureDetector(
-                  //   onTap: () {},
-                  //   child: const SizedBox(
-                  //     child: Icon(
-                  //       Icons.share_outlined,
-                  //       color: HeyDoDoColors.light,
-                  //       size: heyDoDoPadding * 3,
-                  //     ),
-                  //   ),
-                  // ),
                   const SizedBox(
                     width: heyDoDoPadding / 2,
                   ),

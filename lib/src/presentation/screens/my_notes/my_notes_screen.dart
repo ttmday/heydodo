@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:heydodo/src/presentation/widgets/add_action.dart';
+
 import 'package:provider/provider.dart';
 
-import 'package:heydodo/src/config/constants/colors.dart';
 import 'package:heydodo/src/config/constants/utils.dart';
 import 'package:heydodo/src/domain/entities/note_entity.dart';
 import 'package:heydodo/src/presentation/lib/providers/note_provider.dart';
@@ -31,7 +32,6 @@ class _MyNotesScreenState extends State<MyNotesScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      backgroundColor: HeyDoDoColors.white,
       body: Consumer<NoteProvider>(
         builder: (context, provider, _) {
           final notes = provider.notes;
@@ -48,6 +48,14 @@ class _MyNotesScreenState extends State<MyNotesScreen>
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ),
+                actions: [
+                  Padding(
+                      padding: const EdgeInsets.only(
+                          right: heyDoDoPadding * 2, top: heyDoDoPadding),
+                      child: AddAction(
+                        onPressed: _onCreateNewNote,
+                      )),
+                ],
               ),
               notes.isNotEmpty
                   ? MyNoteList(notes: notes)

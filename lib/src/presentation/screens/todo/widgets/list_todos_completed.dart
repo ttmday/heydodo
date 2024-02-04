@@ -13,7 +13,7 @@ class ListTodosCompleted extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<ToDoProvider>(builder: (context, provider, _) {
-      return ListView.builder(
+      return SliverList.builder(
         itemCount: provider.todos.length,
         itemBuilder: (context, index) {
           final todo = provider.todos[index];

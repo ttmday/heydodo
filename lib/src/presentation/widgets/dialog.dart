@@ -13,7 +13,7 @@ class HeyDoDoDialogAlert extends StatelessWidget {
       {required this.title,
       this.titleStyle,
       required this.content,
-      this.confirmCb,
+      this.insetPadding,
       this.contentPadding,
       this.buttons,
       this.icon,
@@ -23,7 +23,7 @@ class HeyDoDoDialogAlert extends StatelessWidget {
   final TextStyle? titleStyle;
   final Widget content;
   final Widget? icon;
-  final Function? confirmCb;
+  final EdgeInsets? insetPadding;
   final EdgeInsetsGeometry? contentPadding;
   final List<Widget>? buttons;
 
@@ -32,35 +32,37 @@ class HeyDoDoDialogAlert extends StatelessWidget {
     return AlertDialog(
         backgroundColor: HeyDoDoColors.white,
         surfaceTintColor: HeyDoDoColors.white,
+        clipBehavior: Clip.hardEdge,
         contentPadding: contentPadding,
-        insetPadding: const EdgeInsets.all(heyDoDoPadding * 2),
+        insetPadding: insetPadding ?? const EdgeInsets.all(heyDoDoPadding * 2),
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(24)),
             side: BorderSide(color: HeyDoDoColors.secondary, width: 2.2)),
-        // titleTextStyle: Theme.of(context).textTheme.displayLarge,
         icon: icon,
         title: null,
-        content: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 160),
+        content: SizedBox(
+          width: double.infinity,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 18, bottom: 6),
-                child: Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: titleStyle ??
-                      const TextStyle(
-                        color: HeyDoDoColors.dark,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w600,
-                      ),
+              if (title.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 18, bottom: 6),
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    style: titleStyle ??
+                        const TextStyle(
+                          color: HeyDoDoColors.dark,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: heyDoDoPadding * 3,
-              ),
+              if (title.isNotEmpty)
+                const SizedBox(
+                  height: heyDoDoPadding * 3,
+                ),
               content
             ],
           ),
@@ -210,7 +212,6 @@ Future<HeyDoDoDialogAlertRole?> showHeyDoDoAlert({
   List<Widget>? buttons,
   EdgeInsetsGeometry? contentPadding,
   Icon? icon,
-  void Function()? confirmCb,
 }) async {
   return await showDialog<HeyDoDoDialogAlertRole>(
       context: context,
@@ -226,7 +227,6 @@ Future<HeyDoDoDialogAlertRole?> showHeyDoDoAlert({
             buttons: buttons ?? [],
             contentPadding: contentPadding,
             icon: icon,
-            confirmCb: confirmCb,
           ),
           builder: (context, value, child) {
             return Transform.scale(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:heydodo/src/presentation/widgets/add_action.dart';
 import 'package:provider/provider.dart';
 
-import 'package:heydodo/src/config/constants/colors.dart';
 import 'package:heydodo/src/config/constants/utils.dart';
 import 'package:heydodo/src/domain/entities/todo_entity.dart';
 import 'package:heydodo/src/presentation/lib/providers/group_todo_provider.dart';
@@ -32,7 +32,6 @@ class _MyToDosScreenState extends State<MyToDosScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      backgroundColor: HeyDoDoColors.white,
       body: Consumer<GroupToDoProvider>(
         builder: (context, provider, _) {
           final groups = provider.groups;
@@ -49,6 +48,14 @@ class _MyToDosScreenState extends State<MyToDosScreen>
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ),
+                actions: [
+                  Padding(
+                      padding: const EdgeInsets.only(
+                          right: heyDoDoPadding * 2, top: heyDoDoPadding),
+                      child: AddAction(
+                        onPressed: _onCreateNewToDo,
+                      )),
+                ],
               ),
               groups.isNotEmpty
                   ? MyGroupToDoList(groups: groups)

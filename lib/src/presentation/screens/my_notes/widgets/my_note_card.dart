@@ -35,7 +35,9 @@ class MyNoteCard extends StatelessWidget {
                     horizontal: heyDoDoPadding * 2, vertical: heyDoDoPadding),
                 height: 110.0,
                 decoration: BoxDecoration(
-                    color: HeyDoDoColors.secondary,
+                    color: note.color != null
+                        ? Color(note.color!)
+                        : HeyDoDoColors.secondary,
                     borderRadius: BorderRadius.circular(24.0)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

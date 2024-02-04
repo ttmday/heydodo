@@ -25,17 +25,20 @@ class ImageContainer extends StatelessWidget {
           Ink(
             width: double.infinity,
             height: 240.0,
-            decoration: image != null
-                ? null
-                : const BoxDecoration(
-                    border: Border.fromBorderSide(
-                        BorderSide(color: HeyDoDoColors.medium))),
+            decoration: BoxDecoration(
+                border: const Border.fromBorderSide(
+                  BorderSide(color: HeyDoDoColors.medium),
+                ),
+                borderRadius: BorderRadius.circular(24.0)),
             child: InkWell(
                 onTap: onImageTap,
                 child: image != null
-                    ? Image.memory(
-                        image!,
-                        fit: BoxFit.cover,
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(24.0),
+                        child: Image.memory(
+                          image!,
+                          fit: BoxFit.cover,
+                        ),
                       )
                     : const Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -67,11 +70,11 @@ class ImageContainer extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(7.0),
                     decoration: BoxDecoration(
-                        color: HeyDoDoColors.light.withOpacity(.25),
+                        color: HeyDoDoColors.white.withOpacity(.85),
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                              color: HeyDoDoColors.light.withOpacity(.12),
+                              color: HeyDoDoColors.white.withOpacity(.35),
                               blurRadius: 4.0,
                               offset: const Offset(1.0, 2.5))
                         ]),

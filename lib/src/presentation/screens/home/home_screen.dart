@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:iconsax/iconsax.dart';
 import 'package:provider/provider.dart';
 
 import 'package:heydodo/src/presentation/lib/providers/group_todo_provider.dart';
 import 'package:heydodo/src/presentation/screens/my_notes/my_notes_screen.dart';
 import 'package:heydodo/src/presentation/screens/my_todos/my_todos_screen.dart';
 import 'package:heydodo/src/presentation/screens/home/bloc/home_bloc.dart';
-import 'package:heydodo/src/presentation/widgets/floating_button.dart';
+
 import 'package:heydodo/src/config/constants/colors.dart';
 import 'package:heydodo/src/config/constants/theme.dart';
 
@@ -47,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _bloC.dispose();
+    _pageController.dispose();
     context.read<StoreProvider>().close();
     super.dispose();
   }
@@ -54,7 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: HeyDoDoColors.white,
       body: SafeArea(
           child: PageView(
         controller: _pageController,
@@ -63,18 +62,18 @@ class _HomeScreenState extends State<HomeScreen> {
           _bloC.setCurrentPage(page);
         },
       )),
-      floatingActionButton: HeyDoDoFloatingButton(
-        onPressed: () {
-          _bloC.floatingButtonActionExecute(context);
-        },
-        child: const SizedBox(
-          child: Icon(
-            Iconsax.add,
-            size: heyDoDoPadding * 4,
-            color: HeyDoDoColors.light,
-          ),
-        ),
-      ),
+      // floatingActionButton: HeyDoDoFloatingButton(
+      //   onPressed: () {
+      //     _bloC.floatingButtonActionExecute(context);
+      //   },
+      //   child: const SizedBox(
+      //     child: Icon(
+      //       Iconsax.add,
+      //       size: heyDoDoPadding * 4,
+      //       color: HeyDoDoColors.light,
+      //     ),
+      //   ),
+      // ),
       bottomNavigationBar: StreamBuilder<int>(
           stream: _bloC.stream,
           initialData: 0,

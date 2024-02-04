@@ -13,19 +13,21 @@ class GroupToDoEntity {
   bool? isFavorite;
   bool? isFixed;
   Uint8List? image;
+  int? color;
 
   @Backlink()
   final todos = ToMany<ToDoEntity>();
 
-  GroupToDoEntity(
-      {this.id = 0,
-      this.description,
-      DateTime? createAt,
-      this.title,
-      this.isFavorite,
-      this.image,
-      this.isFixed})
-      : createAt = createAt ?? DateTime.now();
+  GroupToDoEntity({
+    this.id = 0,
+    this.description,
+    DateTime? createAt,
+    this.title,
+    this.isFavorite,
+    this.image,
+    this.isFixed,
+    this.color,
+  }) : createAt = createAt ?? DateTime.now();
 
   String get dateFormatted => DateFormat('dd/MM/yyyy').format(createAt);
 }
