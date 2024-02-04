@@ -130,7 +130,7 @@ class PageLabel extends StatelessWidget {
               height: 21.0,
               alignment: Alignment.center,
               decoration: const BoxDecoration(
-                  color: HeyDoDoColors.primary, shape: BoxShape.circle),
+                  color: HeyDoDoColors.secondary, shape: BoxShape.circle),
               child: Text(
                 badge.toString(),
                 style:

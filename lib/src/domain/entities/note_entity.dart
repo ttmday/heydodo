@@ -14,6 +14,7 @@ class NoteEntity {
   bool isFixed;
   Uint8List? image;
   int? color;
+  int? textColor;
 
   NoteEntity(
     this.note, {
@@ -24,6 +25,7 @@ class NoteEntity {
     this.image,
     this.isFixed = false,
     this.color,
+    this.textColor,
   }) : createAt = createAt ?? DateTime.now();
 
   String get dateFormatted => DateFormat('dd/MM/yyyy').format(createAt);

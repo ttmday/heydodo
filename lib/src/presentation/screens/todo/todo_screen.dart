@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:heydodo/src/presentation/screens/todo/widgets/add_todo_dialog.dart';
 import 'package:heydodo/src/presentation/widgets/color_random_dialog.dart';
 import 'package:heydodo/src/presentation/widgets/icon_action.dart';
+import 'package:heydodo/src/presentation/widgets/icon_action_with_label.dart';
 import 'package:heydodo/src/presentation/widgets/title_edit_dialog.dart';
 import 'package:heydodo/src/presentation/screens/todo/widgets/todo_paginating_status.dart';
 import 'package:iconsax/iconsax.dart';
@@ -75,75 +76,6 @@ class _ToDoScreenState extends State<ToDoScreen> {
     setState(() {});
   }
 
-  _onSaveGroup() {
-    if (group.todos.isNotEmpty || group.image != null) {
-      group.title = _titleController.text;
-      group.description = _descriptionController.text;
-      context.read<GroupToDoProvider>().write(group);
-      _bloC.update(group);
-    }
-  }
-
-  GroupToDoEntity getGroupFrom(List<GroupToDoEntity> groups) {
-    final g = groups.firstWhere((element) => element.id == group.id);
-
-    return g;
-  }
-
-  _onPickImage(GroupToDoEntity group) async {
-    try {
-      final file = await _imageHelper.pick();
-      if (file == null) return;
-
-      final bytes = _imageHelper.toBytes(file: file);
-      group.image = bytes;
-
-      _bloC.update(group);
-      if (!mounted) return;
-
-      context.read<GroupToDoProvider>().write(group);
-    } catch (e) {
-      showHeyDoDoAlert(
-          context: context,
-          title: '¡Oh no!',
-          content: const HeyDoDoDialogAlertContentText(text: [
-            TextSpan(text: 'Al parecer algo ha salido muy mal'),
-          ]),
-          buttons: [
-            const HeyDoDoAlertButtonConfirm(label: 'Aceptar'),
-          ]);
-    }
-  }
-
-  _onDeleteImage(GroupToDoEntity group) {
-    showHeyDoDoAlert(
-        context: context,
-        title: 'Eliminar imagen',
-        content: const HeyDoDoDialogAlertContentText(text: [
-          TextSpan(
-            text: 'Al presionar continuar la imagen será eliminada.',
-          ),
-          TextSpan(text: '\n¿Está seguro que desea continuar?')
-        ]),
-        buttons: [
-          HeyDoDoAlertButtonConfirm(
-            label: 'Sí, continuar',
-            onPressed: () {
-              Navigator.of(context).pop();
-
-              group.image = null;
-              _bloC.update(group);
-
-              context.read<GroupToDoProvider>().write(group);
-            },
-          ),
-          const SizedBox(
-            width: heyDoDoPadding,
-          ),
-          const HeyDoDoAlertButtonCancel(label: 'cancelar')
-        ]);
-  }
-
   @override
   void dispose() {
     _titleController.dispose();
@@ -168,62 +100,116 @@ class _ToDoScreenState extends State<ToDoScreen> {
               _onSaveGroup();
               Navigator.of(context).pop();
             },
-            icon: const Icon(
-              Icons.arrow_back,
-              size: heyDoDoPadding * 4,
-              color: HeyDoDoColors.light,
-            ),
+            icon: const Icon(Icons.arrow_back,
+                size: heyDoDoPadding * 4, color: HeyDoDoColors.primary),
           ),
           backgroundColor: HeyDoDoColors.white,
           surfaceTintColor: HeyDoDoColors.white,
           actions: [
-            StreamBuilder<GroupToDoEntity>(
-                stream: _bloC.stream,
-                builder: (context, snapshot) {
-                  return IconAction(
-                    onPressed: () async {
-                      int? color = await showDialog(
-                          context: context,
-                          builder: (context) => const ColorRandomDialog());
+            IconAction(
+                icon: Icons.more_vert,
+                onPressed: () {
+                  showModalBottomSheet(
+                      context: context,
+                      backgroundColor: HeyDoDoColors.white,
+                      builder: (context) => Container(
+                            width: double.infinity,
+                            height: 300.0,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14.0, vertical: 21.0),
+                            decoration: const BoxDecoration(
+                                color: HeyDoDoColors.white,
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(24.0),
+                                    topLeft: Radius.circular(24.0))),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Opciones',
+                                  style: TextStyle(
+                                      color: HeyDoDoColors.secondary,
+                                      fontSize: 22.0,
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                const SizedBox(
+                                  height: heyDoDoPadding * 3,
+                                ),
+                                IconActionWithLabel(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    _onSaveGroup();
 
-                      if (color != null) {
-                        group.color = color;
-                        _onSaveGroup();
-                      }
-                    },
-                    icon: Iconsax.colors_square,
-                    iconColor: snapshot.data?.color != null
-                        ? Color(snapshot.data!.color!)
-                        : HeyDoDoColors.secondary,
-                  );
+                                    Navigator.of(context).pop();
+                                  },
+                                  icon: Icons.save_outlined,
+                                  label: 'Guardar',
+                                ),
+                                const SizedBox(
+                                  height: heyDoDoPadding + 5,
+                                ),
+                                IconActionWithLabel(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    _onPickImage(group);
+                                  },
+                                  icon: Iconsax.gallery_add,
+                                  label: 'Agregar imagen',
+                                ),
+                                const SizedBox(
+                                  height: heyDoDoPadding,
+                                ),
+                                IconActionWithLabel(
+                                  onPressed: () async {
+                                    Navigator.of(context).pop();
+                                    int? color = await showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            const ColorRandomDialog());
+
+                                    if (color != null) {
+                                      group.color = color;
+                                      _onSaveGroup();
+                                    }
+                                  },
+                                  icon: Iconsax.paintbucket,
+                                  label: 'Cambiar color de fondo',
+                                ),
+                                const SizedBox(
+                                  height: heyDoDoPadding,
+                                ),
+                                IconActionWithLabel(
+                                  onPressed: () async {
+                                    int? color = await showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            const ColorRandomDialog());
+
+                                    if (color != null) {
+                                      group.textColor = color;
+                                      _onSaveGroup();
+                                    }
+
+                                    if (!mounted) return;
+                                    Navigator.of(context).pop();
+                                  },
+                                  icon: Iconsax.color_swatch,
+                                  label: 'Cambiar color de texto',
+                                ),
+                                const SizedBox(
+                                  height: heyDoDoPadding,
+                                ),
+                              ],
+                            ),
+                          ));
                 }),
             const SizedBox(
               width: heyDoDoPadding,
             ),
-            IconAction(
-              onPressed: () {
-                _onPickImage(group);
-              },
-              icon: Iconsax.gallery_add,
-            ),
-            const SizedBox(
-              width: heyDoDoPadding,
-            ),
-            IconAction(
-              onPressed: () {
-                _onSaveGroup();
-                Navigator.of(context).pop();
-              },
-              icon: Icons.save,
-            ),
-            const SizedBox(
-              width: heyDoDoPadding + 5,
-            )
           ],
         ),
         body: LayoutBuilder(
-          builder: (context, contraints) => Container(
-            decoration: const BoxDecoration(color: HeyDoDoColors.white),
+          builder: (context, contraints) => SizedBox(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 7.0),
               child: CustomScrollView(
@@ -254,11 +240,10 @@ class _ToDoScreenState extends State<ToDoScreen> {
                                       oldText: _titleController.text,
                                       controller: _titleController));
                             },
-                            child: const SizedBox(
-                              width: 35.0,
-                              height: 35.0,
-                              child: Icon(Iconsax.edit),
-                            ),
+                            child: const Icon(Iconsax.edit),
+                          ),
+                          const SizedBox(
+                            width: 3.5,
                           )
                         ],
                       ))),
@@ -267,6 +252,7 @@ class _ToDoScreenState extends State<ToDoScreen> {
                   ),
                   StreamBuilder<GroupToDoEntity>(
                       stream: _bloC.stream,
+                      initialData: group,
                       builder: (context, snapshot) {
                         if (snapshot.data?.image == null) {
                           return const SliverToBoxAdapter(
@@ -340,5 +326,74 @@ class _ToDoScreenState extends State<ToDoScreen> {
         ),
       ),
     );
+  }
+
+  _onSaveGroup() {
+    if (group.todos.isNotEmpty || group.image != null) {
+      group.title = _titleController.text;
+      group.description = _descriptionController.text;
+      context.read<GroupToDoProvider>().write(group);
+      _bloC.update(group);
+    }
+  }
+
+  GroupToDoEntity getGroupFrom(List<GroupToDoEntity> groups) {
+    final g = groups.firstWhere((element) => element.id == group.id);
+
+    return g;
+  }
+
+  _onPickImage(GroupToDoEntity group) async {
+    try {
+      final file = await _imageHelper.pick();
+      if (file == null) return;
+
+      final bytes = _imageHelper.toBytes(file: file);
+      group.image = bytes;
+
+      _bloC.update(group);
+      if (!mounted) return;
+
+      context.read<GroupToDoProvider>().write(group);
+    } catch (e) {
+      showHeyDoDoAlert(
+          context: context,
+          title: '¡Oh no!',
+          content: const HeyDoDoDialogAlertContentText(text: [
+            TextSpan(text: 'Al parecer algo ha salido muy mal'),
+          ]),
+          buttons: [
+            const HeyDoDoAlertButtonConfirm(label: 'Aceptar'),
+          ]);
+    }
+  }
+
+  _onDeleteImage(GroupToDoEntity group) {
+    showHeyDoDoAlert(
+        context: context,
+        title: 'Eliminar imagen',
+        content: const HeyDoDoDialogAlertContentText(text: [
+          TextSpan(
+            text: 'Al presionar continuar la imagen será eliminada.',
+          ),
+          TextSpan(text: '\n¿Está seguro que desea continuar?')
+        ]),
+        buttons: [
+          HeyDoDoAlertButtonConfirm(
+            label: 'Sí, continuar',
+            onPressed: () {
+              Navigator.of(context).pop();
+
+              group.image = null;
+              _bloC.update(group);
+
+              context.read<GroupToDoProvider>().write(group);
+            },
+          ),
+          const SizedBox(
+            width: heyDoDoPadding,
+          ),
+          const HeyDoDoAlertButtonCancel(label: 'cancelar')
+        ]);
   }
 }

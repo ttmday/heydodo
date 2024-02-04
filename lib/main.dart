@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'package:heydodo/objectbox.g.dart';
 
+import 'package:heydodo/src/presentation/lib/providers/colors_provider.dart';
 import 'package:heydodo/src/presentation/lib/providers/group_todo_provider.dart';
 import 'package:heydodo/src/presentation/lib/providers/store_provider.dart';
 import 'package:heydodo/src/presentation/lib/providers/todo_provider.dart';
@@ -37,7 +37,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             lazy: false, create: (context) => GroupToDoProvider(store)),
         ChangeNotifierProvider(
-            lazy: false, create: (context) => ToDoProvider(store))
+            lazy: false, create: (context) => ToDoProvider(store)),
+        ChangeNotifierProvider(create: (context) => ColorsProvider(store))
       ],
       child: Builder(builder: (context) {
         final router = context.read<HeyDoDoRouter>().router;

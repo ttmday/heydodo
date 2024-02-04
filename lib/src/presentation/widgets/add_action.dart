@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:heydodo/src/config/constants/colors.dart';
 import 'package:iconsax/iconsax.dart';
+
+import 'package:heydodo/src/config/constants/colors.dart';
 
 class AddAction extends StatelessWidget {
   const AddAction({super.key, required this.onPressed});
@@ -18,7 +18,7 @@ class AddAction extends StatelessWidget {
         padding: const EdgeInsets.all(3.5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(14.0),
-          color: HeyDoDoColors.primary,
+          color: HeyDoDoColors.secondary,
         ),
         child: const Icon(
           Iconsax.add,

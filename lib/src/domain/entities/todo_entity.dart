@@ -14,6 +14,7 @@ class GroupToDoEntity {
   bool? isFixed;
   Uint8List? image;
   int? color;
+  int? textColor;
 
   @Backlink()
   final todos = ToMany<ToDoEntity>();
@@ -27,6 +28,7 @@ class GroupToDoEntity {
     this.image,
     this.isFixed,
     this.color,
+    this.textColor,
   }) : createAt = createAt ?? DateTime.now();
 
   String get dateFormatted => DateFormat('dd/MM/yyyy').format(createAt);

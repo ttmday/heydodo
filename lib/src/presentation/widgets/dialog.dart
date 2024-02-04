@@ -29,6 +29,7 @@ class HeyDoDoDialogAlert extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size q = MediaQuery.of(context).size;
     return AlertDialog(
         backgroundColor: HeyDoDoColors.white,
         surfaceTintColor: HeyDoDoColors.white,
@@ -41,7 +42,7 @@ class HeyDoDoDialogAlert extends StatelessWidget {
         icon: icon,
         title: null,
         content: SizedBox(
-          width: double.infinity,
+          width: q.width,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

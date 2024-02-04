@@ -14,6 +14,7 @@ import 'package:objectbox/internal.dart'; // generated code can access "internal
 import 'package:objectbox/objectbox.dart';
 import 'package:objectbox_flutter_libs/objectbox_flutter_libs.dart';
 
+import 'src/domain/entities/colors_entity.dart';
 import 'src/domain/entities/note_entity.dart';
 import 'src/domain/entities/todo_entity.dart';
 
@@ -23,7 +24,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(1, 6862108361595227655),
       name: 'NoteEntity',
-      lastPropertyId: const IdUid(8, 6337840827733730960),
+      lastPropertyId: const IdUid(18, 4532023332976826533),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -32,38 +33,43 @@ final _entities = <ModelEntity>[
             type: 6,
             flags: 1),
         ModelProperty(
-            id: const IdUid(2, 4789513195538902755),
+            id: const IdUid(11, 6865153359337635382),
             name: 'note',
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(3, 7849163641810743106),
+            id: const IdUid(12, 1260366142549703367),
             name: 'createAt',
             type: 10,
             flags: 0),
         ModelProperty(
-            id: const IdUid(4, 2797032748280607955),
+            id: const IdUid(13, 5555685278895047967),
             name: 'title',
             type: 9,
             flags: 0),
         ModelProperty(
-            id: const IdUid(5, 3311567535724719304),
+            id: const IdUid(14, 4096811122149483579),
             name: 'isFavorite',
             type: 1,
             flags: 0),
         ModelProperty(
-            id: const IdUid(6, 4777201384192816163),
+            id: const IdUid(15, 4317530218677804932),
             name: 'isFixed',
             type: 1,
             flags: 0),
         ModelProperty(
-            id: const IdUid(7, 1493677288048773510),
+            id: const IdUid(16, 4591232369354355464),
             name: 'image',
             type: 23,
             flags: 0),
         ModelProperty(
-            id: const IdUid(8, 6337840827733730960),
+            id: const IdUid(17, 9060649068684223272),
             name: 'color',
+            type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(18, 4532023332976826533),
+            name: 'textColor',
             type: 6,
             flags: 0)
       ],
@@ -108,7 +114,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(4, 5622547392139153183),
       name: 'GroupToDoEntity',
-      lastPropertyId: const IdUid(8, 530225373659667565),
+      lastPropertyId: const IdUid(9, 6252965230335182510),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -150,12 +156,36 @@ final _entities = <ModelEntity>[
             id: const IdUid(8, 530225373659667565),
             name: 'color',
             type: 6,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(9, 6252965230335182510),
+            name: 'textColor',
+            type: 6,
             flags: 0)
       ],
       relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[
         ModelBacklink(name: 'todos', srcEntity: 'ToDoEntity', srcField: '')
-      ])
+      ]),
+  ModelEntity(
+      id: const IdUid(6, 4893651105216704981),
+      name: 'ColorEntity',
+      lastPropertyId: const IdUid(2, 6918572627355827744),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 7337183666988578076),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 6918572627355827744),
+            name: 'color',
+            type: 6,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[])
 ];
 
 /// Shortcut for [Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -185,11 +215,11 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(4, 5622547392139153183),
+      lastEntityId: const IdUid(6, 4893651105216704981),
       lastIndexId: const IdUid(1, 7426775246748463389),
       lastRelationId: const IdUid(0, 0),
       lastSequenceId: const IdUid(0, 0),
-      retiredEntityUids: const [3247160816363046676],
+      retiredEntityUids: const [3247160816363046676, 6727822959427789073],
       retiredIndexUids: const [],
       retiredPropertyUids: const [
         3345552812197501285,
@@ -197,7 +227,18 @@ ModelDefinition getObjectBoxModel() {
         1624065521052511682,
         7997612560322581523,
         1913333118476635932,
-        2220367887358650419
+        2220367887358650419,
+        4789513195538902755,
+        7849163641810743106,
+        2797032748280607955,
+        3311567535724719304,
+        4777201384192816163,
+        1493677288048773510,
+        6337840827733730960,
+        280111940102569698,
+        831057575670469800,
+        5278510954384184443,
+        4863895892734795292
       ],
       retiredRelationUids: const [],
       modelVersion: 5,
@@ -219,15 +260,16 @@ ModelDefinition getObjectBoxModel() {
               object.title == null ? null : fbb.writeString(object.title!);
           final imageOffset =
               object.image == null ? null : fbb.writeListInt8(object.image!);
-          fbb.startTable(9);
+          fbb.startTable(19);
           fbb.addInt64(0, object.id);
-          fbb.addOffset(1, noteOffset);
-          fbb.addInt64(2, object.createAt.millisecondsSinceEpoch);
-          fbb.addOffset(3, titleOffset);
-          fbb.addBool(4, object.isFavorite);
-          fbb.addBool(5, object.isFixed);
-          fbb.addOffset(6, imageOffset);
-          fbb.addInt64(7, object.color);
+          fbb.addOffset(10, noteOffset);
+          fbb.addInt64(11, object.createAt.millisecondsSinceEpoch);
+          fbb.addOffset(12, titleOffset);
+          fbb.addBool(13, object.isFavorite);
+          fbb.addBool(14, object.isFixed);
+          fbb.addOffset(15, imageOffset);
+          fbb.addInt64(16, object.color);
+          fbb.addInt64(17, object.textColor);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -235,21 +277,23 @@ ModelDefinition getObjectBoxModel() {
           final buffer = fb.BufferContext(fbData);
           final rootOffset = buffer.derefObject(0);
           final noteParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGet(buffer, rootOffset, 6, '');
+              .vTableGet(buffer, rootOffset, 24, '');
           final idParam =
               const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
           final createAtParam = DateTime.fromMillisecondsSinceEpoch(
-              const fb.Int64Reader().vTableGet(buffer, rootOffset, 8, 0));
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 26, 0));
           final titleParam = const fb.StringReader(asciiOptimization: true)
-              .vTableGetNullable(buffer, rootOffset, 10);
+              .vTableGetNullable(buffer, rootOffset, 28);
           final isFavoriteParam =
-              const fb.BoolReader().vTableGet(buffer, rootOffset, 12, false);
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 30, false);
           final imageParam = const fb.Uint8ListReader(lazy: false)
-              .vTableGetNullable(buffer, rootOffset, 16) as Uint8List?;
+              .vTableGetNullable(buffer, rootOffset, 34) as Uint8List?;
           final isFixedParam =
-              const fb.BoolReader().vTableGet(buffer, rootOffset, 14, false);
+              const fb.BoolReader().vTableGet(buffer, rootOffset, 32, false);
           final colorParam =
-              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 18);
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 36);
+          final textColorParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 38);
           final object = NoteEntity(noteParam,
               id: idParam,
               createAt: createAtParam,
@@ -257,7 +301,8 @@ ModelDefinition getObjectBoxModel() {
               isFavorite: isFavoriteParam,
               image: imageParam,
               isFixed: isFixedParam,
-              color: colorParam);
+              color: colorParam,
+              textColor: textColorParam);
 
           return object;
         }),
@@ -320,7 +365,7 @@ ModelDefinition getObjectBoxModel() {
               object.title == null ? null : fbb.writeString(object.title!);
           final imageOffset =
               object.image == null ? null : fbb.writeListInt8(object.image!);
-          fbb.startTable(9);
+          fbb.startTable(10);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, descriptionOffset);
           fbb.addInt64(2, object.createAt.millisecondsSinceEpoch);
@@ -329,6 +374,7 @@ ModelDefinition getObjectBoxModel() {
           fbb.addBool(5, object.isFixed);
           fbb.addOffset(6, imageOffset);
           fbb.addInt64(7, object.color);
+          fbb.addInt64(8, object.textColor);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -352,6 +398,8 @@ ModelDefinition getObjectBoxModel() {
               const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 14);
           final colorParam =
               const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 18);
+          final textColorParam =
+              const fb.Int64Reader().vTableGetNullable(buffer, rootOffset, 20);
           final object = GroupToDoEntity(
               id: idParam,
               description: descriptionParam,
@@ -360,12 +408,39 @@ ModelDefinition getObjectBoxModel() {
               isFavorite: isFavoriteParam,
               image: imageParam,
               isFixed: isFixedParam,
-              color: colorParam);
+              color: colorParam,
+              textColor: textColorParam);
           InternalToManyAccess.setRelInfo<GroupToDoEntity>(
               object.todos,
               store,
               RelInfo<ToDoEntity>.toOneBacklink(
                   4, object.id, (ToDoEntity srcObject) => srcObject.group));
+          return object;
+        }),
+    ColorEntity: EntityDefinition<ColorEntity>(
+        model: _entities[3],
+        toOneRelations: (ColorEntity object) => [],
+        toManyRelations: (ColorEntity object) => {},
+        getId: (ColorEntity object) => object.id,
+        setId: (ColorEntity object, int id) {
+          object.id = id;
+        },
+        objectToFB: (ColorEntity object, fb.Builder fbb) {
+          fbb.startTable(3);
+          fbb.addInt64(0, object.id);
+          fbb.addInt64(1, object.color);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+          final colorParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 6, 0);
+          final idParam =
+              const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0);
+          final object = ColorEntity(colorParam, id: idParam);
+
           return object;
         })
   };
@@ -406,6 +481,10 @@ class NoteEntity_ {
   /// see [NoteEntity.color]
   static final color =
       QueryIntegerProperty<NoteEntity>(_entities[0].properties[7]);
+
+  /// see [NoteEntity.textColor]
+  static final textColor =
+      QueryIntegerProperty<NoteEntity>(_entities[0].properties[8]);
 }
 
 /// [ToDoEntity] entity fields to define ObjectBox queries.
@@ -464,4 +543,19 @@ class GroupToDoEntity_ {
   /// see [GroupToDoEntity.color]
   static final color =
       QueryIntegerProperty<GroupToDoEntity>(_entities[2].properties[7]);
+
+  /// see [GroupToDoEntity.textColor]
+  static final textColor =
+      QueryIntegerProperty<GroupToDoEntity>(_entities[2].properties[8]);
+}
+
+/// [ColorEntity] entity fields to define ObjectBox queries.
+class ColorEntity_ {
+  /// see [ColorEntity.id]
+  static final id =
+      QueryIntegerProperty<ColorEntity>(_entities[3].properties[0]);
+
+  /// see [ColorEntity.color]
+  static final color =
+      QueryIntegerProperty<ColorEntity>(_entities[3].properties[1]);
 }
